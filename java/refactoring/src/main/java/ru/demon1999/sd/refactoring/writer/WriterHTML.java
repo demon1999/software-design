@@ -1,6 +1,8 @@
 package ru.demon1999.sd.refactoring.writer;
 
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class WriterHTML {
     private PrintWriter printWriter;
@@ -30,5 +32,13 @@ public class WriterHTML {
 
     public void printWithH1(String s) {
         printString("<h1>" + s + "</h1>");
+    }
+
+    public void printNamePriceTable(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            String  name = rs.getString("name");
+            int price  = rs.getInt("price");
+            printNamePrice(name, price);
+        }
     }
 }

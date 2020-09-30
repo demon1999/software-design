@@ -1,17 +1,13 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.InfoQueries.GetQuery;
 import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
-import ru.demon1999.sd.refactoring.DataBase.QueryResult;
 import ru.demon1999.sd.refactoring.writer.WriterHTML;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * @author akirakozov
@@ -27,18 +23,7 @@ public class GetProductsServlet extends HttpServlet {
         WriterHTML writer = new WriterHTML(response.getWriter());
 
         try {
-            QueryResult res = dataBase.getEveryProduct();
-            ResultSet rs = res.getResultSet();
-            writer.printStartTags();
-
-            while (rs.next()) {
-                String  name = rs.getString("name");
-                int price  = rs.getInt("price");
-                writer.printNamePrice(name, price);
-            }
-
-            writer.printEndTags();
-
+            new GetQuery(writer, dataBase).printResult();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

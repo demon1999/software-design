@@ -1,13 +1,10 @@
 package ru.demon1999.sd.refactoring.servlet;
 
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
 import ru.demon1999.sd.refactoring.DataBase.QueryResult;
 
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
