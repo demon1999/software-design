@@ -1,5 +1,7 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
+import ru.demon1999.sd.refactoring.DataBase.QueryResult;
 import ru.demon1999.sd.refactoring.writer.WriterHTML;
 
 import javax.servlet.http.HttpServlet;
@@ -15,6 +17,11 @@ import java.sql.Statement;
  * @author akirakozov
  */
 public class QueryServlet extends HttpServlet {
+    private ProductsDataBase dataBase;
+    public QueryServlet(ProductsDataBase dataBase) {
+        this.dataBase = dataBase;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
@@ -22,85 +29,65 @@ public class QueryServlet extends HttpServlet {
 
         if ("max".equals(command)) {
             try {
-                try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-                    writer.printStartTags();
-                    writer.printWithH1("Product with max price: ");
+                QueryResult res = dataBase.getMaxPricedProduct();
+                ResultSet rs = res.getResultSet();
+                writer.printStartTags();
+                writer.printWithH1("Product with max price: ");
 
-                    while (rs.next()) {
-                        String  name = rs.getString("name");
-                        int price  = rs.getInt("price");
-                        writer.printNamePrice(name, price);
-                    }
-                    writer.printEndTags();
-
-                    rs.close();
-                    stmt.close();
+                while (rs.next()) {
+                    String  name = rs.getString("name");
+                    int price  = rs.getInt("price");
+                    writer.printNamePrice(name, price);
                 }
+
+                writer.printEndTags();
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else if ("min".equals(command)) {
             try {
-                try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-                    writer.printStartTags();
-                    writer.printWithH1("Product with min price: ");
+                QueryResult res = dataBase.getMinPricedProduct();
+                ResultSet rs = res.getResultSet();
+                writer.printStartTags();
+                writer.printWithH1("Product with min price: ");
 
-                    while (rs.next()) {
-                        String  name = rs.getString("name");
-                        int price  = rs.getInt("price");
-                        writer.printNamePrice(name, price);
-                    }
-                    writer.printEndTags();
-
-                    rs.close();
-                    stmt.close();
+                while (rs.next()) {
+                    String  name = rs.getString("name");
+                    int price  = rs.getInt("price");
+                    writer.printNamePrice(name, price);
                 }
+
+                writer.printEndTags();
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else if ("sum".equals(command)) {
             try {
-                try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-                    writer.printStartTags();
-                    writer.printString("Summary price: ");
+                QueryResult res = dataBase.getSumOfPrices();
+                ResultSet rs = res.getResultSet();
+                writer.printStartTags();
+                writer.printString("Summary price: ");
 
-                    if (rs.next()) {
-                        writer.printInt(rs.getInt(1));
-                    }
-                    writer.printEndTags();
-
-                    rs.close();
-                    stmt.close();
+                if (rs.next()) {
+                    writer.printInt(rs.getInt(1));
                 }
-
+                writer.printEndTags();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else if ("count".equals(command)) {
             try {
-                try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-                    writer.printStartTags();
-                    writer.printString("Number of products: ");
+                QueryResult res = dataBase.getNumberOfProducts();
+                ResultSet rs = res.getResultSet();
+                writer.printStartTags();
+                writer.printString("Number of products: ");
 
-                    if (rs.next()) {
-                        writer.printInt(rs.getInt(1));
-                    }
-                    writer.printEndTags();
-
-                    rs.close();
-                    stmt.close();
+                if (rs.next()) {
+                    writer.printInt(rs.getInt(1));
                 }
-
+                writer.printEndTags();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

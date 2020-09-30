@@ -46,4 +46,20 @@ public class ProductsDataBase {
     public QueryResult getEveryProduct() throws SQLException {
         return infoQuery("SELECT * FROM PRODUCT");
     }
+
+    public QueryResult getMinPricedProduct() throws SQLException {
+        return infoQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
+    }
+
+    public QueryResult getMaxPricedProduct() throws SQLException {
+        return infoQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
+    }
+
+    public QueryResult getNumberOfProducts() throws  SQLException {
+        return infoQuery("SELECT COUNT(*) FROM PRODUCT");
+    }
+
+    public QueryResult getSumOfPrices() throws SQLException {
+        return infoQuery("SELECT SUM(price) FROM PRODUCT");
+    }
 }

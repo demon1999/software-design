@@ -3,12 +3,14 @@ package ru.demon1999.sd.refactoring.servlet;
 import org.junit.Before;
 import org.junit.Test;
 import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
+import ru.demon1999.sd.refactoring.DataBase.QueryResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
@@ -21,17 +23,28 @@ public class ServletTest {
     private HttpServletResponse response;
     private HttpServletRequest request;
     private ProductsDataBase dataBase;
+    ResultSet dummyRS;
+    QueryResult dummyQR;
 
     @Before
     public void setUp() throws IOException, SQLException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-
+        dataBase = mock(ProductsDataBase.class);
+        dummyRS = mock(ResultSet.class);
+        dummyQR = mock(QueryResult.class);
+        when(dummyRS.next()).thenReturn(false);
+        when(dummyQR.getResultSet()).thenReturn(dummyRS);
+        when(dataBase.getEveryProduct()).thenReturn(dummyQR);
+        when(dataBase.getMinPricedProduct()).thenReturn(dummyQR);
+        when(dataBase.getNumberOfProducts()).thenReturn(dummyQR);
+        when(dataBase.getSumOfPrices()).thenReturn(dummyQR);
+        when(dataBase.getMaxPricedProduct()).thenReturn(dummyQR);
 
         stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
-        dataBase = new ProductsDataBase("jdbc:sqlite:test.db");
+
     }
 
     private void makeEmptyTable() throws SQLException {
@@ -39,68 +52,50 @@ public class ServletTest {
         dataBase.createIfNotExists();
     }
 
-    private void addProduct(String name, Long price) throws IOException {
-        when(request.getParameter("name")).thenReturn(name);
-        when(request.getParameter("price")).thenReturn(price.toString());
-        new AddProductServlet(dataBase).doGet(request, response);
-    }
-
-    private void initQuery() throws IOException, SQLException {
-        makeEmptyTable();
-        addProduct("Iphone", 365L);
-        addProduct("Iphone2", 565L);
-    }
-
-    private void initSpecificQuery(String s) throws IOException, SQLException {
-        initQuery();
-        when(request.getParameter("command")).thenReturn(s);
-        new QueryServlet().doGet(request, response);
-    }
     @Test
     public void testAdd() throws IOException, SQLException {
-        makeEmptyTable();
-        addProduct("iphone", 365L);
+        when(request.getParameter("name")).thenReturn("iphone");
+        when(request.getParameter("price")).thenReturn("365");
+        new AddProductServlet(dataBase).doGet(request, response);
         assertEquals(stringWriter.toString(), "OK\n");
     }
 
     @Test
     public void testGet() throws IOException, SQLException {
-        initQuery();
         new GetProductsServlet(dataBase).doGet(request, response);
-        assertEquals(stringWriter.toString(), "OK\n" +
-                "OK\n" +
+        assertEquals(stringWriter.toString(),
                 "<html><body>\n" +
-                "Iphone\t365</br>\n" +
-                "Iphone2\t565</br>\n" +
                 "</body></html>\n");
     }
 
     @Test
     public void testMin() throws IOException, SQLException {
-        initSpecificQuery("min");
-        assertEquals(stringWriter.toString(), "OK\n" +
-                "OK\n" +
+        when(request.getParameter("command")).thenReturn("min");
+        new QueryServlet(dataBase).doGet(request, response);
+
+        assertEquals(stringWriter.toString(),
                 "<html><body>\n" +
                 "<h1>Product with min price: </h1>\n" +
-                "Iphone\t365</br>\n" +
                 "</body></html>\n");
     }
+
     @Test
     public void testMax() throws IOException, SQLException {
-        initSpecificQuery("max");
-        assertEquals(stringWriter.toString(), "OK\n" +
-                "OK\n" +
+        when(request.getParameter("command")).thenReturn("max");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
                 "<html><body>\n" +
                 "<h1>Product with max price: </h1>\n" +
-                "Iphone2\t565</br>\n" +
                 "</body></html>\n");
     }
 
     @Test
     public void testSum() throws IOException, SQLException {
-        initSpecificQuery("sum");
-        assertEquals(stringWriter.toString(), "OK\n" +
-                "OK\n" +
+        when(dummyRS.next()).thenReturn(true);
+        when(dummyRS.getInt(1)).thenReturn(930);
+        when(request.getParameter("command")).thenReturn("sum");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
                 "<html><body>\n" +
                 "Summary price: \n" +
                 "930\n" +
@@ -109,9 +104,11 @@ public class ServletTest {
 
     @Test
     public void testCount() throws IOException, SQLException {
-        initSpecificQuery("count");
-        assertEquals(stringWriter.toString(), "OK\n" +
-                "OK\n" +
+        when(dummyRS.next()).thenReturn(true);
+        when(dummyRS.getInt(1)).thenReturn(2);
+        when(request.getParameter("command")).thenReturn("count");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
                 "<html><body>\n" +
                 "Number of products: \n" +
                 "2\n" +
