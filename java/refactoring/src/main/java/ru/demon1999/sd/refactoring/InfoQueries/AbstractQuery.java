@@ -16,11 +16,11 @@ abstract public class AbstractQuery {
     public void printResult() {
         try {
             QueryResult res = result();
-            ResultSet rs = res.getResultSet();
             WriterHTML writer = getWriter();
             writer.printStartTags();
             printResultBody();
             writer.printEndTags();
+            res.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -13,7 +13,7 @@ public class MaxQuery extends AbstractQuery {
 
     public MaxQuery(WriterHTML writer, ProductsDataBase dataBase) throws SQLException {
         this.writer = writer;
-        this.res = dataBase.getMinPricedProduct();
+        this.res = dataBase.getMaxPricedProduct();
     }
 
     @Override

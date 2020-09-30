@@ -13,7 +13,7 @@ public class CountQuery extends AbstractQuery {
 
     public CountQuery(WriterHTML writer, ProductsDataBase dataBase) throws SQLException {
         this.writer = writer;
-        this.res = dataBase.getMinPricedProduct();
+        this.res = dataBase.getNumberOfProducts();
     }
 
     @Override

@@ -114,4 +114,50 @@ public class ServletTest {
                 "2\n" +
                 "</body></html>\n");
     }
+
+    @Test
+    public void testRealDB() throws SQLException, IOException {
+        dataBase = new ProductsDataBase("jdbc:sqlite:test1.db");
+        dataBase.dropTableIfExists();
+        dataBase.createIfNotExists();
+        for (int i = 0; i < 5; i++) {
+            when(request.getParameter("name")).thenReturn("iphone" + Integer.toString(i));
+            when(request.getParameter("price")).thenReturn(Integer.toString(i));
+            new AddProductServlet(dataBase).doGet(request, response);
+            assertEquals(stringWriter.toString(), "OK\n");
+            stringWriter.getBuffer().setLength(0);
+        }
+        when(request.getParameter("command")).thenReturn("count");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
+                "<html><body>\n" +
+                        "Number of products: \n" +
+                        "5\n" +
+                        "</body></html>\n");
+        stringWriter.getBuffer().setLength(0);
+        when(request.getParameter("command")).thenReturn("sum");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
+                "<html><body>\n" +
+                "Summary price: \n" +
+                "10\n" +
+                "</body></html>\n");
+        stringWriter.getBuffer().setLength(0);
+        when(request.getParameter("command")).thenReturn("min");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
+                "<html><body>\n" +
+                        "<h1>Product with min price: </h1>\n" +
+                        "iphone0\t0</br>\n" +
+                        "</body></html>\n");
+        stringWriter.getBuffer().setLength(0);
+        when(request.getParameter("command")).thenReturn("max");
+        new QueryServlet(dataBase).doGet(request, response);
+        assertEquals(stringWriter.toString(),
+                "<html><body>\n" +
+                        "<h1>Product with max price: </h1>\n" +
+                        "iphone4\t4</br>\n" +
+                        "</body></html>\n");
+        stringWriter.getBuffer().setLength(0);
+    }
 }

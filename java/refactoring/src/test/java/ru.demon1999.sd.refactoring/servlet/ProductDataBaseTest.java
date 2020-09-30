@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ProductDataBaseTest {
-    ProductsDataBase dataBase;
+    private ProductsDataBase dataBase;
 
     @Before
     public void setUp() throws SQLException {

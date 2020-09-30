@@ -13,7 +13,7 @@ public class SumQuery extends AbstractQuery {
 
     public SumQuery(WriterHTML writer, ProductsDataBase dataBase) throws SQLException {
         this.writer = writer;
-        this.res = dataBase.getMinPricedProduct();
+        this.res = dataBase.getSumOfPrices();
     }
 
     @Override
