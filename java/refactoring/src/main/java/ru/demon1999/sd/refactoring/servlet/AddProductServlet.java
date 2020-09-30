@@ -1,5 +1,6 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
 import ru.demon1999.sd.refactoring.writer.WriterHTML;
 
 import javax.servlet.http.HttpServlet;
@@ -14,6 +15,10 @@ import java.sql.Statement;
  * @author akirakozov
  */
 public class AddProductServlet extends HttpServlet {
+    private ProductsDataBase dataBase;
+    public AddProductServlet(ProductsDataBase dataBase) {
+        this.dataBase = dataBase;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -22,13 +27,7 @@ public class AddProductServlet extends HttpServlet {
         WriterHTML writer = new WriterHTML(response.getWriter());
 
         try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                String sql = "INSERT INTO PRODUCT " +
-                        "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")";
-                Statement stmt = c.createStatement();
-                stmt.executeUpdate(sql);
-                stmt.close();
-            }
+            dataBase.addProductQuery(name, price);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

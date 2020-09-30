@@ -2,6 +2,7 @@ package ru.demon1999.sd.refactoring.servlet;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,9 +23,10 @@ public class ServletTest {
     private StringWriter stringWriter;
     private HttpServletResponse response;
     private HttpServletRequest request;
+    private ProductsDataBase dataBase;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, SQLException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
@@ -32,33 +34,18 @@ public class ServletTest {
         stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);
+        dataBase = new ProductsDataBase("jdbc:sqlite:test.db");
     }
 
     private void makeEmptyTable() throws SQLException {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-            String sql = "DROP TABLE IF EXISTS PRODUCT";
-            Statement stmt = c.createStatement();
-
-            stmt.executeUpdate(sql);
-            stmt.close();
-        }
-
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-            String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
-                    "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    " NAME           TEXT    NOT NULL, " +
-                    " PRICE          INT     NOT NULL)";
-            Statement stmt = c.createStatement();
-
-            stmt.executeUpdate(sql);
-            stmt.close();
-        }
+        dataBase.dropTableIfExists();
+        dataBase.createIfNotExists();
     }
 
     private void addProduct(String name, Long price) throws IOException {
         when(request.getParameter("name")).thenReturn(name);
         when(request.getParameter("price")).thenReturn(price.toString());
-        new AddProductServlet().doGet(request, response);
+        new AddProductServlet(dataBase).doGet(request, response);
     }
 
     private void initQuery() throws IOException, SQLException {
