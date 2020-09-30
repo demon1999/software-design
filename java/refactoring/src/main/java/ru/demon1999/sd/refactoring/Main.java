@@ -8,10 +8,6 @@ import ru.demon1999.sd.refactoring.servlet.AddProductServlet;
 import ru.demon1999.sd.refactoring.servlet.GetProductsServlet;
 import ru.demon1999.sd.refactoring.servlet.QueryServlet;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-
 /**
  * @author akirakozov
  */
@@ -26,7 +22,7 @@ public class Main {
         server.setHandler(context);
 
         context.addServlet(new ServletHolder(new AddProductServlet(db)), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()),"/get-products");
+        context.addServlet(new ServletHolder(new GetProductsServlet(db)),"/get-products");
         context.addServlet(new ServletHolder(new QueryServlet()),"/query");
 
         server.start();

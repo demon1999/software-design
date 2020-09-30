@@ -1,9 +1,6 @@
 package ru.demon1999.sd.refactoring.DataBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ProductsDataBase {
     private final String path;
@@ -14,6 +11,13 @@ public class ProductsDataBase {
             stmt.executeUpdate(query);
             stmt.close();
         }
+    }
+
+    private QueryResult infoQuery(String query) throws SQLException {
+        Connection c = DriverManager.getConnection(path);
+        Statement stmt = c.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        return new QueryResult(c, stmt, rs);
     }
 
     public void createIfNotExists() throws SQLException {
@@ -39,5 +43,7 @@ public class ProductsDataBase {
                 + name + "\"," + price + ")");
     }
 
-
+    public QueryResult getEveryProduct() throws SQLException {
+        return infoQuery("SELECT * FROM PRODUCT");
+    }
 }

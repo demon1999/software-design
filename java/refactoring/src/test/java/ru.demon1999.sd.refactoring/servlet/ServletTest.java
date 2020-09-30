@@ -9,10 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -69,7 +66,7 @@ public class ServletTest {
     @Test
     public void testGet() throws IOException, SQLException {
         initQuery();
-        new GetProductsServlet().doGet(request, response);
+        new GetProductsServlet(dataBase).doGet(request, response);
         assertEquals(stringWriter.toString(), "OK\n" +
                 "OK\n" +
                 "<html><body>\n" +

@@ -1,5 +1,7 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.DataBase.ProductsDataBase;
+import ru.demon1999.sd.refactoring.DataBase.QueryResult;
 import ru.demon1999.sd.refactoring.writer.WriterHTML;
 
 import javax.servlet.http.HttpServlet;
@@ -15,26 +17,27 @@ import java.sql.Statement;
  * @author akirakozov
  */
 public class GetProductsServlet extends HttpServlet {
+    private ProductsDataBase dataBase;
+    public GetProductsServlet(ProductsDataBase dataBase) {
+        this.dataBase = dataBase;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WriterHTML writer = new WriterHTML(response.getWriter());
+
         try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
-                writer.printStartTags();
+            QueryResult res = dataBase.getEveryProduct();
+            ResultSet rs = res.getResultSet();
+            writer.printStartTags();
 
-                while (rs.next()) {
-                    String  name = rs.getString("name");
-                    int price  = rs.getInt("price");
-                    writer.printNamePrice(name, price);
-                }
-                writer.printEndTags();
-
-                rs.close();
-                stmt.close();
+            while (rs.next()) {
+                String  name = rs.getString("name");
+                int price  = rs.getInt("price");
+                writer.printNamePrice(name, price);
             }
+
+            writer.printEndTags();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
