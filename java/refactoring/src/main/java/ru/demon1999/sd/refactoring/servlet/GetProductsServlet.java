@@ -1,5 +1,7 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.writer.WriterHTML;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,18 +18,19 @@ public class GetProductsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        WriterHTML writer = new WriterHTML(response.getWriter());
         try {
             try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                 Statement stmt = c.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
-                response.getWriter().println("<html><body>");
+                writer.printStartTags();
 
                 while (rs.next()) {
                     String  name = rs.getString("name");
                     int price  = rs.getInt("price");
-                    response.getWriter().println(name + "\t" + price + "</br>");
+                    writer.printNamePrice(name, price);
                 }
-                response.getWriter().println("</body></html>");
+                writer.printEndTags();
 
                 rs.close();
                 stmt.close();

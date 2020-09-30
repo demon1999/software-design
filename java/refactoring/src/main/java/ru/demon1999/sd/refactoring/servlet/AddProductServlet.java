@@ -1,5 +1,7 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.writer.WriterHTML;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +19,7 @@ public class AddProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String name = request.getParameter("name");
         long price = Long.parseLong(request.getParameter("price"));
+        WriterHTML writer = new WriterHTML(response.getWriter());
 
         try {
             try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
@@ -32,6 +35,6 @@ public class AddProductServlet extends HttpServlet {
 
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("OK");
+        writer.printString("OK");
     }
 }

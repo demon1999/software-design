@@ -1,5 +1,7 @@
 package ru.demon1999.sd.refactoring.servlet;
 
+import ru.demon1999.sd.refactoring.writer.WriterHTML;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,21 +18,22 @@ public class QueryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
+        WriterHTML writer = new WriterHTML(response.getWriter());
 
         if ("max".equals(command)) {
             try {
                 try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with max price: </h1>");
+                    writer.printStartTags();
+                    writer.printWithH1("Product with max price: ");
 
                     while (rs.next()) {
                         String  name = rs.getString("name");
                         int price  = rs.getInt("price");
-                        response.getWriter().println(name + "\t" + price + "</br>");
+                        writer.printNamePrice(name, price);
                     }
-                    response.getWriter().println("</body></html>");
+                    writer.printEndTags();
 
                     rs.close();
                     stmt.close();
@@ -44,15 +47,15 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with min price: </h1>");
+                    writer.printStartTags();
+                    writer.printWithH1("Product with min price: ");
 
                     while (rs.next()) {
                         String  name = rs.getString("name");
                         int price  = rs.getInt("price");
-                        response.getWriter().println(name + "\t" + price + "</br>");
+                        writer.printNamePrice(name, price);
                     }
-                    response.getWriter().println("</body></html>");
+                    writer.printEndTags();
 
                     rs.close();
                     stmt.close();
@@ -66,13 +69,13 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Summary price: ");
+                    writer.printStartTags();
+                    writer.printString("Summary price: ");
 
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        writer.printInt(rs.getInt(1));
                     }
-                    response.getWriter().println("</body></html>");
+                    writer.printEndTags();
 
                     rs.close();
                     stmt.close();
@@ -86,13 +89,13 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Number of products: ");
+                    writer.printStartTags();
+                    writer.printString("Number of products: ");
 
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        writer.printInt(rs.getInt(1));
                     }
-                    response.getWriter().println("</body></html>");
+                    writer.printEndTags();
 
                     rs.close();
                     stmt.close();
@@ -102,7 +105,7 @@ public class QueryServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
         } else {
-            response.getWriter().println("Unknown command: " + command);
+            writer.printString("Unknown command: " + command);
         }
 
         response.setContentType("text/html");
