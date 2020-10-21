@@ -1,8 +1,8 @@
-package ru.akirakozov.sd.mvc.dao;
+package ru.demon1999.sd.mvc.dao;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import ru.akirakozov.sd.mvc.model.Product;
+import ru.demon1999.sd.mvc.model.Product;
 
 import javax.sql.DataSource;
 import java.util.List;

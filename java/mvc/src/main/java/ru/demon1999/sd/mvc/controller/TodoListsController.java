@@ -1,4 +1,4 @@
-package ru.akirakozov.sd.mvc.controller;
+package ru.demon1999.sd.mvc.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.akirakozov.sd.mvc.dao.ProductDao;
-import ru.akirakozov.sd.mvc.logic.DataFilter;
-import ru.akirakozov.sd.mvc.model.Filter;
-import ru.akirakozov.sd.mvc.model.Product;
+import ru.demon1999.sd.mvc.dao.ProductDao;
+import ru.demon1999.sd.mvc.logic.DataFilter;
+import ru.demon1999.sd.mvc.model.Filter;
+import ru.demon1999.sd.mvc.model.Product;
 
 import java.util.List;
 import java.util.Optional;

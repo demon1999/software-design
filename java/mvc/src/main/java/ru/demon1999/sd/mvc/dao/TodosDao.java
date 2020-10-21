@@ -1,6 +1,6 @@
-package ru.akirakozov.sd.mvc.dao;
+package ru.demon1999.sd.mvc.dao;
 
-import ru.akirakozov.sd.mvc.model.Product;
+import ru.demon1999.sd.mvc.model.Product;
 
 import java.util.List;
 import java.util.Optional;
