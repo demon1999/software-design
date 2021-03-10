@@ -1,0 +1,7 @@
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/UserController.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/model/UserProperty.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/model/UserStocks.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/dao/UsersDao.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/UserApplication.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/client/ExchangerClient.java
+/home/demon1999/code/itmo-4/ppo/software-design/java/stockexchanger2/user-service/src/main/java/demon1999/dao/UsersInMemoryDao.java
